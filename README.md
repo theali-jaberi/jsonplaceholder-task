@@ -1,67 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# JSONPlaceholder Explorer
+
+A Next.js App Router UI for browsing users, posts, and todos from JSONPlaceholder. Includes full testing (unit, integration with MSW, and Playwright E2E), Docker packaging, and CI that builds/pushes images to GHCR.
+
+## Stack
+- Next.js 16 (App Router) · React 19 · TypeScript
+- Tailwind CSS (v4 tooling)
+- Tests: Jest + Testing Library + MSW (unit/integration) and Playwright (E2E)
+- API: JSONPlaceholder (override with `NEXT_PUBLIC_API_BASE_URL`)
 
 ## Getting Started
-
-First, run the development server:
+Prereqs: Node 20+ and npm.
 
 ```bash
+npm ci
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Scripts
+- `npm run dev` — start Next dev server
+- `npm run lint` — ESLint
+- `npm run test` — unit + integration + E2E
+  - `npm run test:unit`
+  - `npm run test:integration`
+  - `npm run test:e2e`
+- `npm run test:coverage` — Jest coverage (`coverage/lcov-report/index.html`)
+- `npm run build` / `npm start` — production build & run
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Testing
-
-### Unit + Integration (Jest + Testing Library + MSW)
-
-```bash
-# all jest tests
-npm test
-
-# unit tests only
-npm run test:unit
-
-# integration tests only
-npm run test:integration
-```
-
-### E2E (Playwright)
-
-Playwright needs browser binaries installed once:
-
+### E2E tests
+Install browsers once:
 ```bash
 npx playwright install chromium
 ```
-
-Run E2E tests:
-
+Run:
 ```bash
 npm run test:e2e
 ```
+E2E uses a local mock API (see `e2e/webserver.mjs`) via `NEXT_PUBLIC_API_BASE_URL`, so tests don’t hit the live service.
 
-Note: E2E uses a **local mock API server** (see `e2e/webserver.mjs`) via `NEXT_PUBLIC_API_BASE_URL`, so it doesn’t depend on the public JSONPlaceholder service.
+## Docker
+Build and run:
+```bash
+docker build -t jsonplaceholder-app .
+docker run -p 3000:3000 jsonplaceholder-app
+```
+Uses a multi-stage build and runs the Next standalone output (see `Dockerfile`).
 
-## Learn More
+## CI (GitHub Actions)
+Workflow: `.github/workflows/ci.yml`
+- Runs lint, unit/integration/E2E tests, and `npm run build`.
+- Builds and (on push) publishes Docker images to GHCR:
+  - `ghcr.io/<owner>/<repo>:sha-<sha>`
+  - `ghcr.io/<owner>/<repo>:latest`
 
-To learn more about Next.js, take a look at the following resources:
+## Configuration
+- `NEXT_PUBLIC_API_BASE_URL` (optional): override JSONPlaceholder base URL (E2E points to the mock API).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

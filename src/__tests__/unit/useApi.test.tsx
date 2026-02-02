@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { useApi } from "@/hooks/useApi";
@@ -29,7 +29,7 @@ describe("src/hooks/useApi", () => {
     render(<UseApiHarness fetchFn={fetchFn} />);
 
     expect(screen.getByText("loading:yes")).toBeInTheDocument();
-    expect(fetchFn).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(fetchFn).toHaveBeenCalledTimes(1));
 
     expect(await screen.findByText("data:hello")).toBeInTheDocument();
     expect(screen.getByText("loading:no")).toBeInTheDocument();

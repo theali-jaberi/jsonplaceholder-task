@@ -1,6 +1,10 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import process from "node:process";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const API_PORT = Number(process.env.E2E_API_PORT ?? 4010);
 const APP_PORT = Number(process.env.E2E_APP_PORT ?? 3000);
@@ -158,8 +162,9 @@ apiServer.listen(API_PORT, "127.0.0.1", () => {
   console.log(`[e2e] mock api listening on http://127.0.0.1:${API_PORT}`);
 });
 
-const npmCmd = process.platform === "win32" ? "npm.cmd" : "npm";
-const nextProc = spawn(npmCmd, ["run", "dev", "--", "-p", String(APP_PORT)], {
+const nextBin = path.join(__dirname, "..", "node_modules", "next", "dist", "bin", "next");
+const nextProc = spawn(process.execPath, [nextBin, "dev", "-p", String(APP_PORT)], {
+  cwd: path.join(__dirname, ".."),
   env: {
     ...process.env,
     NEXT_PUBLIC_API_BASE_URL: `http://127.0.0.1:${API_PORT}`,

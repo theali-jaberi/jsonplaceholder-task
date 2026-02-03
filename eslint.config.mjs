@@ -12,6 +12,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "coverage/**",
+    "test-results/**",
+    ".swc/**",
+    "node_modules/**",
+    "jest.setup.ts",
+    "jest.config.js",
   ]),
 ]);
 
